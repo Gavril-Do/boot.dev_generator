@@ -8,23 +8,37 @@ class HTMLNode:
 		self.props = props
 
 	def to_html(self):
-		raise NotImplementedError
+		raise NotImplementedError("to_html method not implemented")
 	
 	# Return string that represents the HTML attributes of the node
 	def props_to_html(self):
-		props_dict = self.props.copy()
+		if self.props == None:
+			return ""
 		string = ""
-		for each in props_dict:
-			if string == "":
-				string = f' {each}="{props_dict[each]}"'
-			else:
-				string = string + f' {each}="{props_dict[each]}"'
+		for each in self.props:
+			string += f' {each}="{self.props[each]}"'
 		return string
 	
-
 	# print HTMLNode object to see it's tag, value, children, props for debug
 	def __repr__(self):
-		return f"HTMLNode(tag='{self.tag}', value='{self.value}', children='{self.children}', props='{self.props})'"
+		return f"HTMLNode(tag='{self.tag}', value='{self.value}', children='{self.children}', props='{self.props}')"
+	
+class ParentNode(HTMLNode):
+	def __init__(self, tag, children, props=None):
+		super().__init__(tag, None, children, props)
+
+	def to_html(self):
+		if self.tag == None or self.tag == "":
+			raise ValueError(f"Invalid HTML: no tag")
+		if self.children == None or self.children == []:
+			raise ValueError(f"Invalid HTML: no children")
+		node_str = ""
+		for each in self.children:
+			node_str += each.to_html()
+		return f"<{self.tag}{self.props_to_html()}>{node_str}</{self.tag}>"
+	
+	def __repr__(self):
+		return f"ParentNode(tag={self.tag}, children={self.children}, {self.props})"
 	
 class LeafNode(HTMLNode):
 	def __init__(self, tag, value, props=None):
@@ -32,18 +46,14 @@ class LeafNode(HTMLNode):
 
 	# render HTML tag
 	def to_html(self):
-		tag_convert = convert_tag(self.tag)
 		if self.value == None:
-			raise ValueError
+			raise ValueError(f"Invalid HTML: no value")
 		if self.tag == None:
-			return f"{self.value}"
-		match(self.tag):
-			case("p"):
-				return f"{tag_convert[0]}{self.value}{tag_convert[1]}"
-			case("a"):
-				return f'<{self.tag} {list(self.props)[0]}="{self.props[list(self.props)[0]]}">{self.value}{tag_convert[1]}'
-
-def convert_tag(tag, value=None):
-	if type(tag) != str:
-		raise ValueError
-	return f"<{tag}>", f"</{tag}>"
+			return self.value
+		# if self.props == None:
+		# 	return f"<{self.tag}>{self.value}</{self.tag}>"
+		return_string = f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+		return return_string
+	
+	def __repr__(self):
+		return f"LeafNode({self.tag}, {self.value}, {self.props})"

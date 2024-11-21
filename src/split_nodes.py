@@ -1,10 +1,10 @@
 from textnode import *
-
+import re
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
 	return_node_list = []
 	if type(old_nodes) != list:
-		raise ValueError("must be a list")
+		raise ValueError("must be iterable object")
 	for node in old_nodes:
 		if node.text_type != TextType.TEXT:
 			return_node_list.append(node)
@@ -22,3 +22,11 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 				split_nodes.append(TextNode(sections[i], text_type))
 		return_node_list.extend(split_nodes)
 	return return_node_list
+
+def extract_markdown_images(text):
+	tuple_list = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+	return tuple_list
+
+def extract_markdown_links(text):
+	tuple_list = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+	return tuple_list

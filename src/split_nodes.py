@@ -90,3 +90,12 @@ def split_nodes_link(old_nodes):
         if original_text != "":
             new_nodes.append(TextNode(original_text, TextType.TEXT))
     return new_nodes
+
+def text_to_textnodes(text):
+	Node_list = [TextNode(text, TextType.TEXT)]
+	Node_list = split_nodes_delimiter(Node_list, "**", TextType.BOLD)
+	Node_list = split_nodes_delimiter(Node_list, "*", TextType.ITALIC)
+	Node_list = split_nodes_delimiter(Node_list, "`", TextType.CODE)
+	Node_list = split_nodes_image(Node_list)
+	Node_list = split_nodes_link(Node_list)
+	return Node_list

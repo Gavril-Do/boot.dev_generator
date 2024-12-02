@@ -70,6 +70,121 @@ This is the same paragraph on a new line
 		block = "paragraph"
 		self.assertEqual(block_to_block_type(block), block_type_paragraph)
 
+	def test_text_to_children(self):
+		md = "This is **text** with an *italic* word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
+		nodes = [
+			LeafNode(None, "This is ", None),
+			LeafNode("b", "text", None),
+			LeafNode(None, " with an ", None),
+			LeafNode("i", "italic", None),
+			LeafNode(None, " word and a ", None),
+			LeafNode("code", "code block", None),
+			LeafNode(None, " and an ", None),
+			LeafNode("img", "", {'src': 'https://i.imgur.com/zjjcJKZ.png', 'alt': 'image'}),
+			LeafNode(None, " and a ", None),
+			LeafNode("a", "link", {'href': 'https://boot.dev'})
+		]
+		children = text_to_children(md)
+		# print(children)
+		for i in range(len(children)):
+			# print(children[i])
+			self.assertEqual(
+				children[i].to_html(),
+				nodes[i].to_html()
+			)
+
+	def test_markdown_to_html_node(self):
+		md = "This is **text** with an *italic* word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
+		node = markdown_to_html_node(md)
+		# print(node.to_html())
+		self.assertEqual(
+			node.to_html(),
+			'<div><p>This is <b>text</b> with an <i>italic</i> word and a <code>code block</code> and an <img src="https://i.imgur.com/zjjcJKZ.png" alt="image"></img> and a <a href="https://boot.dev">link</a></p></div>'
+		)
+
+	def test_paragraph(self):
+		md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+"""
+
+		node = markdown_to_html_node(md)
+		html = node.to_html()
+		self.assertEqual(
+			html,
+			"<div><p>This is <b>bolded</b> paragraph text in a p tag here</p></div>",
+		)
+
+	def test_paragraphs(self):
+		md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with *italic* text and `code` here
+
+"""
+
+		node = markdown_to_html_node(md)
+		html = node.to_html()
+		self.assertEqual(
+			html,
+			"<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+		)
+
+	def test_lists(self):
+		md = """
+- This is a list
+- with items
+- and *more* items
+
+1. This is an `ordered` list
+2. with items
+3. and more items
+
+"""
+
+		node = markdown_to_html_node(md)
+		html = node.to_html()
+		self.assertEqual(
+			html,
+			"<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <code>ordered</code> list</li><li>with items</li><li>and more items</li></ol></div>",
+		)
+
+	def test_headings(self):
+		md = """
+# this is an h1
+
+this is paragraph text
+
+## this is an h2
+"""
+
+		node = markdown_to_html_node(md)
+		html = node.to_html()
+		self.assertEqual(
+			html,
+			"<div><h1>this is an h1</h1><p>this is paragraph text</p><h2>this is an h2</h2></div>",
+		)
+
+	def test_blockquote(self):
+		md = """
+> This is a
+> blockquote block
+
+this is paragraph text
+
+"""
+
+		node = markdown_to_html_node(md)
+		html = node.to_html()
+		self.assertEqual(
+			html,
+			"<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>",
+		)
+
 
 if __name__ == "__main__":
 	unittest.main()

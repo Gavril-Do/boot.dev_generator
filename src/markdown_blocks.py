@@ -77,16 +77,6 @@ def block_to_html_node(block):
 		case _:
 			raise ValueError("Invlaid block type")
 
-		# based on block type create new HTMLNode with proper data
-		# assign proper child HTMLNode objects to block node
-			# shared text_to_children function -- take string and return HTMLNode list
-	# return block node children under single parent HTML node (div)
-	# Quote blocks should be surrounded by a <blockquote> tag
-	# Unordered list blocks should be surrounded by a <ul> tag, and each list item should be surrounded by a <li> tag
-	# Ordered list blocks should be surrounded by a <ol> tag, and each list item should be surrounded by a <li> tag
-	# code blocks should be surrounded by a <code> tag nested in a <pre> tag
-	# headings should be surrounded by a <h1> to <h6> tag, depending on the number of # characters
-	# paragraphs should be surrounded by a <p> tag
 
 def text_to_children(text):
 	text_to_nodes = text_to_textnodes(text)

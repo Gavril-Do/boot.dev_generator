@@ -3,7 +3,7 @@ import os, shutil
 
 from markdown_blocks import *
 from copystatic import *
-from gen_content import generate_page
+from gen_content import *
 
 static_path = "./static"
 public_path = "./public"
@@ -19,11 +19,7 @@ def main():
 	static_to_public(static_path, public_path)
 
 	# print("Generating page...")
-	generate_page(
-		os.path.join(path_content, "index.md"),
-		template_path,
-		os.path.join(public_path, "index.html")
-	)
+	generate_pages_recursive(path_content, template_path, public_path)
 
 
 main()

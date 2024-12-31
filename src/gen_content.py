@@ -1,5 +1,18 @@
 import os
+from pathlib import Path
 from markdown_blocks import markdown_to_html_node
+
+def generate_pages_recursive(content_dir_path, template_path, dest_dir_path):
+	# crawl every entry in the content directory
+	for item in os.listdir(content_dir_path):
+		from_path = os.path.join(content_dir_path, item)
+		dest_path = os.path.join(dest_dir_path, item)
+		if os.path.isfile(from_path):
+			generate_page(from_path, template_path, Path(dest_path).with_suffix(".html"))
+		else:
+			generate_pages_recursive(from_path, template_path, dest_path)
+	# for each markdown file, generate new html file using same template. pages should be written to public dir in same dir structure
+
 
 def generate_page(from_path, template_path, dest_path):
 	# print a message "Generating page from "from_path" to "dest_path" using "template_path"
@@ -23,8 +36,8 @@ def generate_page(from_path, template_path, dest_path):
 	# print(dest_dir_path)
 	if dest_dir_path != "":
 		os.makedirs(dest_dir_path, exist_ok=True)
-	# with open(dest_path, "x+") as f:
-	# 	f.write(templ_file)
+	with open(dest_path, "x+") as f:
+		f.write(templ_file)
 
 def extract_title(markdown):
 	lines = markdown.split("\n")
